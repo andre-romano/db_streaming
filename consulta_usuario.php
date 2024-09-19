@@ -38,27 +38,32 @@
             $email = "%" . $_POST["email"] . "%";
         }
 
-        // faz a consulta SELECT
-        $consulta_sql = <<<HEREDOC
-            SELECT * 
-            FROM Usuario 
-            WHERE email LIKE ? 
-        HEREDOC;
-        $resultados = $conn->prepare($consulta_sql);
-        $resultados->execute(array(
-            $email
-        ));
-        $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            // faz a consulta SELECT
+            $consulta_sql = <<<HEREDOC
+                SELECT * 
+                FROM Usuario 
+                WHERE email LIKE ? 
+            HEREDOC;
+            $resultados = $conn->prepare($consulta_sql);
+            $resultados->execute(array(
+                $email
+            ));
+            $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
 
-        // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
-        createTable(array(
-            "id" => "ID",
-            "email" => "Email",
-            "primeiro_nome" => "Nome",
-            "sobrenome"     => "Sobrenome",
-            "dt_nascimento" => "Data de Nascimento",
-            "dt_registro"   => "Data de Registro",
-        ), $tabela_dados);
+            // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
+            createTable(array(
+                "id" => "ID",
+                "email" => "Email",
+                "primeiro_nome" => "Nome",
+                "sobrenome"     => "Sobrenome",
+                "dt_nascimento" => "Data de Nascimento",
+                "dt_registro"   => "Data de Registro",
+            ), $tabela_dados);
+        } catch (PDOException $e) {
+            // Handle the error
+            echo "<b>Error:</b> " . $e->getMessage();
+        }
 
         // desconecte o PHP do DB teste (importante fazer isso sempre que terminarmos de acessar o DB)
         require './src/db_disconnect_pdo.php';

@@ -38,25 +38,30 @@
             $nota_min = $_POST["nota_min"];
         }
 
-        // faz a consulta SELECT
-        $consulta_sql = <<<HEREDOC
-            SELECT * 
-            FROM Avaliacao 
-            WHERE nota >= ? 
-        HEREDOC;
-        $resultados = $conn->prepare($consulta_sql);
-        $resultados->execute(array(
-            $nota_min
-        ));
-        $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            // faz a consulta SELECT
+            $consulta_sql = <<<HEREDOC
+                SELECT * 
+                FROM Avaliacao 
+                WHERE nota >= ? 
+            HEREDOC;
+            $resultados = $conn->prepare($consulta_sql);
+            $resultados->execute(array(
+                $nota_min
+            ));
+            $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
 
-        // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
-        createTable(array(
-            "id_video"   => "ID Vídeo",
-            "id_usuario" => "ID Usuário",
-            "nota"         => "Nota",
-            "dt_avaliacao" => "Data da Avaliação",
-        ), $tabela_dados);
+            // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
+            createTable(array(
+                "id_video"   => "ID Vídeo",
+                "id_usuario" => "ID Usuário",
+                "nota"         => "Nota",
+                "dt_avaliacao" => "Data da Avaliação",
+            ), $tabela_dados);
+        } catch (PDOException $e) {
+            // Handle the error
+            echo "<b>Error:</b> " . $e->getMessage();
+        }
 
         // desconecte o PHP do DB teste (importante fazer isso sempre que terminarmos de acessar o DB)
         require './src/db_disconnect_pdo.php';

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta Video</title>
+    <title>Consulta Video com JOIN</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
 </head>
@@ -54,32 +54,17 @@
         }
 
         try {
-            // faz a consulta SELECT na tabela Produtos
-            // "Pesquise pelos produtos cujo preco seja maior ou igual que um determinado valor, definido no comando execute"
+            // faz a consulta SELECT 
             $consulta_sql = <<<HEREDOC
-                SELECT * 
-                FROM Video 
-                WHERE titulo LIKE ? 
+                SELECT v.*, c.nome AS nome_classificacao
+                FROM Video v, Classificacao c 
+                WHERE titulo LIKE ? AND
+                    v.id_classificacao = c.id
             HEREDOC;
             $resultados = $conn->prepare($consulta_sql);
-            // vincula o valor $titulo ao primeiro ? da consulta SQL
-            // Logo, a consulta se torna:
-            //      SELECT * FROM Video WHERE titulo LIKE $titulo ;    
-            // Este recurso é importante pra evitar SQL Injections.    
             $resultados->execute(array(
                 $titulo
             ));
-            // Se nenhuma ? existir na consulta, podemos simplesmente fazer:
-            //     $resultados->execute();
-            // Se mais de um ? existir, basta passar os valores pelo vetor abaixo na ordem das ?
-            // Suponha a seguinte consulta SQL:
-            //      SELECT * FROM Video WHERE titulo LIKE ? AND ano >= ? ; 
-            // Nesse caso teriamos que fazer:
-            //      $resultados->execute( array($titulo, $ano) );
-            // onde $ano é uma variavel com um numero inteiro
-
-            // pegue todos os dados da consulta como uma tabela
-            // formato: array( "nome_atributo" => valor )
             $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
 
             // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é matriz de dados)
@@ -90,7 +75,7 @@
                 "ano" => "Ano",
                 "titulo" => "Título",
                 "duracao" => "Duração",
-                "id_classificacao" => "Classificação",
+                "nome_classificacao" => "Classificação",
                 "sinopse" => "Sinopse",
             ), $tabela_dados);
         } catch (PDOException $e) {

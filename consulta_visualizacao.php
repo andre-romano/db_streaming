@@ -43,48 +43,53 @@
             $id_video = $_POST['id_video'];
         }
 
-        // cria a consulta SELECT
-        $consulta_params = array();
-        $consulta_sql = <<<HEREDOC
-            SELECT * 
-            FROM Visualizacao
-        HEREDOC;
-        // usuario enviou alguma condicao ? Crie uma condicao WHERE no SQL
-        if ($id_usuario !== "" && $id_video !== "") {
-            //  podemos concatenar uma string no PHP da seguinte forma:
-            //     $consulta_sql = $consulta_sql . "string aqui"
-            //  tambem podemos fazer essa concatenacao assim:
-            //     $consulta_sql .= "string aqui"
-            $consulta_sql .= " WHERE id_usuario = ? AND id_video = ? ";
-            // salve o valor a ser inserido no lugar de ?
-            // no array $consulta_params
-            array_push($consulta_params, $id_usuario);
-            array_push($consulta_params, $id_video);
-        } else if ($id_usuario !== "") {
-            // temos somente a condicao do id_usuario
-            $consulta_sql .= " WHERE id_usuario = ? ";
-            array_push($consulta_params, $id_usuario);
-        } else if ($id_video !== "") {
-            // temos somente a condicao do id_video
-            $consulta_sql .= " WHERE id_video = ? ";
-            array_push($consulta_params, $id_video);
+        try {
+            // cria a consulta SELECT
+            $consulta_params = array();
+            $consulta_sql = <<<HEREDOC
+                SELECT * 
+                FROM Visualizacao
+            HEREDOC;
+            // usuario enviou alguma condicao ? Crie uma condicao WHERE no SQL
+            if ($id_usuario !== "" && $id_video !== "") {
+                //  podemos concatenar uma string no PHP da seguinte forma:
+                //     $consulta_sql = $consulta_sql . "string aqui"
+                //  tambem podemos fazer essa concatenacao assim:
+                //     $consulta_sql .= "string aqui"
+                $consulta_sql .= " WHERE id_usuario = ? AND id_video = ? ";
+                // salve o valor a ser inserido no lugar de ?
+                // no array $consulta_params
+                array_push($consulta_params, $id_usuario);
+                array_push($consulta_params, $id_video);
+            } else if ($id_usuario !== "") {
+                // temos somente a condicao do id_usuario
+                $consulta_sql .= " WHERE id_usuario = ? ";
+                array_push($consulta_params, $id_usuario);
+            } else if ($id_video !== "") {
+                // temos somente a condicao do id_video
+                $consulta_sql .= " WHERE id_video = ? ";
+                array_push($consulta_params, $id_video);
+            }
+
+            // executa a consulta SQL
+            $resultados = $conn->prepare($consulta_sql);
+            if (count($consulta_params) > 0)
+                $resultados->execute($consulta_params);
+            else
+                $resultados->execute();
+            $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
+
+            // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
+            createTable(array(
+                "id_usuario" => "ID Usuario",
+                "id_video"   => "ID Video",
+                "data_hora"  => "Data e Hora",
+                "duracao_assistida" => "Duração Assistida",
+            ), $tabela_dados);
+        } catch (PDOException $e) {
+            // Handle the error
+            echo "<b>Error:</b> " . $e->getMessage();
         }
-
-        // executa a consulta SQL
-        $resultados = $conn->prepare($consulta_sql);
-        if (count($consulta_params) > 0)
-            $resultados->execute($consulta_params);
-        else
-            $resultados->execute();
-        $tabela_dados = $resultados->fetchAll(PDO::FETCH_ASSOC);
-
-        // mostrar a tabela (primeiro parametro é o cabecalho da tabela, o segundo é tabela de dados)
-        createTable(array(
-            "id_usuario" => "ID Usuario",
-            "id_video"   => "ID Video",
-            "data_hora"  => "Data e Hora",
-            "duracao_assistida" => "Duração Assistida",
-        ), $tabela_dados);
 
         // desconecte o PHP do DB teste (importante fazer isso sempre que terminarmos de acessar o DB)
         require './src/db_disconnect_pdo.php';

@@ -18,6 +18,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="consulta_video.php">Vídeos</a></li>
+                        <li><a class="dropdown-item" href="consulta_video_join.php">Vídeos com JOIN</a></li>
                         <li><a class="dropdown-item" href="consulta_genero.php">Gêneros</a></li>
                         <li><a class="dropdown-item" href="consulta_avaliacao.php">Avaliação</a></li>
                         <li><a class="dropdown-item" href="consulta_visualizacao.php">Visualização</a></li>
@@ -26,9 +27,38 @@
                     </ul>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="exemplo.php">Exemplo PHP</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Cadastrar
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="cadastrar_usuario.php">Usuários</a></li>
+                    </ul>
                 </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Atualizar
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="atualizar_usuario.php">Usuários</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Deletar
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="deletar_usuario.php">Usuários</a></li>
+                    </ul>
+                </li>
+
+                <!-- 
+                <li class="nav-item">
+                    <a class="nav-link" href="">Botao Simples Aqui</a>
+                </li> 
+                -->
 
                 <!-- FIM DOS BOTões  DO NAVBAR -->
             </ul>
