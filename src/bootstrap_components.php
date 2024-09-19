@@ -19,19 +19,21 @@ $radioCount = 0;
  * @param string $type define o tipo do input (vide https://www.w3schools.com/html/html_form_input_types.asp)
  * @param string $texto 
  * @param string $valor 
+ * @param bool $read_only ativa ou desativa para edicao
  * @return void
  */
-function createInput(string $id, string $type = "text", string $texto = "Exemplo", string $valor = ""): void
+function createInput(string $id, string $type = "text", string $texto = "Exemplo", string $valor = "", bool $read_only = true): void
 {
     // o echo imprime na tela uma string
     // o <<<HEREDOC informa que essa string possui varias linhas e termina quando o texto HEREDOC aparecer
     //     IMPORTANTE: depois do <<<HEREDOC não pode ter nenhum caracter (nem mesmo um espaco sequer !!! )
     // $VARIAVEL indica que nesse local a variavel de nome VARIAVEL deve ser colocada no texto
+    $readonlyAttr = ($read_only ? "" : "readonly");
     echo <<<HEREDOC
     <div class="row mb-3">
         <label for="$id" class="col-sm-2 col-form-label text-right">$texto</label>
         <div class="col">
-            <input type="$type" class="form-control" id="$id" name="$id" value="$valor">
+            <input type="$type" class="form-control" id="$id" name="$id" value="$valor" $readonlyAttr>
         </div>
     </div>
     HEREDOC;
@@ -103,18 +105,15 @@ function createSwitchCheckbox(string $id, string $texto, bool $checked = false)
     HEREDOC;
 }
 
-/*
- cria uma tabela 
- $header é o cabecalho da tabela.
- ex: $header = array("cabecalho 1", "cabecalho 2", ...);
- $body é o corpo da tabela.
- ex: $body = array(
-        array("linha 1 - item 1", "linha 1 - item 2", ...), 
-        array("linha 2 - item 1", "linha 2 - item 2", ...), 
-        ...
-     );
-*/
-function createTable(array $header, array $body)
+/**
+ * Cria uma tabela
+ *
+ * @param array $header cabecalho da tabela | formato array( atributo => nome_cabecalho )
+ * @param array $body dados a serem mostrados na pagina | formato array( array( atributo => nome_cabecalho ) , ... )
+ * @param array $actions acoes que podem ser feitas com cada tupla mostrada | formato array( atributo => tag_html_da_acao )
+ * @return void
+ */
+function createTable(array $header, array $body, array $actions = array())
 {
     echo <<<HEREDOC
     <div class="container table-responsive">
@@ -125,6 +124,9 @@ function createTable(array $header, array $body)
     foreach ($header as $key => $value) {
         echo "<th scope=\"col\">$value</th>";
     }
+    foreach ($actions as $key => $value) {
+        echo "<th scope=\"col\"></th>";
+    }
     echo <<<HEREDOC
                 </tr>
             </thead>
@@ -134,6 +136,12 @@ function createTable(array $header, array $body)
         echo "<tr>";
         foreach ($header as $key => $value) {
             echo "<td scope=\"row\">$linha[$key]</td>";
+        }
+        foreach ($actions as $action) {
+            foreach ($action as $key => $value) {
+                $htmlTag = str_replace(':' . $key, strval($linha[$key]), $value);
+                echo "<td scope=\"row\">$htmlTag</td>";
+            }
         }
         echo "</tr>";
     }

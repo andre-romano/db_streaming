@@ -24,32 +24,46 @@
         <!-- No nosso caso é $_POST["precoId"] -->
         <form class="col mb-4" action="deletar_usuario.php" method="post">
             <?php
-            createInput("email", "email",    "Email:");
+            // PEGUE O ID ENVIADO PELO USUARIO
+            $id = "";
+            if (isset($_GET['id'])) {
+                $id = $_GET["id"];
+            }
+            createInput("id", "number",    "ID:", $id,  false);
             ?>
             <button type="submit" class="btn btn-primary">Enviar consulta</button>
         </form>
 
         <?php
         // Verifica se o usuario enviou dados atraves do metodo POST do HTTP
-        $email = "";
-        if (isset($_POST['email'])) {
-            $email = $_POST["email"];
+        $id = "";
+        if (isset($_POST['id'])) {
+            $id = $_POST["id"];
         }
 
         // testa se todos os atributos foram preenchidos pelo usuario
-        if ($email !== "") {
+        if ($id !== "") {
             try {
                 // faz a consulta SELECT
                 $consulta_sql = <<<HEREDOC
                     DELETE FROM Usuario 
-                    WHERE email LIKE ?
+                    WHERE id = ?
                 HEREDOC;
                 $resultados = $conn->prepare($consulta_sql);
                 $resultados->execute(array(
-                    $email
+                    $id
                 ));
                 echo <<<HEREDOC
                     <h4 class="text-center">Usuario deletado com sucesso</h4>
+                    <h5 class="text-center">Redirecionando de volta em 3 segundos...</h5>
+
+                    <!-- redirecionar usuario de volta -->
+                    <script>
+                        // Redirect after 5 seconds (3000 milliseconds)
+                        setTimeout(function() {
+                            window.location.href = "consulta_usuario.php";
+                        }, 3000);
+                    </script>
                 HEREDOC;
             } catch (PDOException $e) {
                 // Handle the error

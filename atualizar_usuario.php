@@ -24,12 +24,47 @@
         <!-- No nosso caso é $_POST["precoId"] -->
         <form class="col mb-4" action="atualizar_usuario.php" method="post">
             <?php
-            createInput("id",            "number",     "ID:");
-            createInput("email",         "email",      "Email:");
-            createInput("senha",         "password",   "Senha:");
-            createInput("primeiro_nome", "text",       "Nome:");
-            createInput("sobrenome",     "text",       "Sobrenome:");
-            createInput("dt_nascimento", "date",       "Data de Nascimento:");
+            $id = "";
+            $email = "";
+            $senha = "";
+            $primeiro_nome = "";
+            $sobrenome = "";
+            $dt_nascimento = "";
+
+            // PEGUE O ID ENVIADO PELO USUARIO
+            if (isset($_GET['id'])) {
+                try {
+                    $id = $_GET["id"];
+                    // faz a consulta SELECT
+                    $consulta_sql = <<<HEREDOC
+                        SELECT * 
+                        FROM Usuario 
+                        WHERE id = ? 
+                    HEREDOC;
+                    $resultados = $conn->prepare($consulta_sql);
+                    $resultados->execute(array(
+                        $id
+                    ));
+                    $dados = $resultados->fetch(PDO::FETCH_ASSOC);
+                    if ($dados !== false && $dados !== null) {
+                        $email = $dados['email'];
+                        $senha = $dados['senha'];
+                        $primeiro_nome = $dados['primeiro_nome'];
+                        $sobrenome = $dados['sobrenome'];
+                        $dt_nascimento = $dados['dt_nascimento'];
+                    }
+                } catch (PDOException $e) {
+                    // Handle the error
+                    echo "<b>Error:</b> " . $e->getMessage();
+                }
+            }
+
+            createInput("id",            "number",    "ID:",        $id,    false);
+            createInput("email",         "email",     "Email:",     $email);
+            createInput("senha",         "password",  "Senha:",     $senha);
+            createInput("primeiro_nome", "text",      "Nome:",      $primeiro_nome);
+            createInput("sobrenome",     "text",      "Sobrenome:", $sobrenome);
+            createInput("dt_nascimento", "date",      "Data de Nascimento:", $dt_nascimento);
             ?>
             <button type="submit" class="btn btn-primary">Enviar consulta</button>
         </form>
@@ -76,10 +111,20 @@
                     $senha,
                     $primeiro_nome,
                     $sobrenome,
-                    $dt_nascimento
+                    $dt_nascimento,
+                    $id,
                 ));
                 echo <<<HEREDOC
-                    <h4 class="text-center">Usuario atualizado com sucesso</h4>
+                    <h4 class="text-center">Usuario atualizado com sucesso.</h4>
+                    <h5 class="text-center">Redirecionando de volta em 3 segundos...</h5>
+
+                    <!-- redirecionar usuario de volta -->
+                    <script>
+                        // Redirect after 3 seconds
+                        setTimeout(function() {
+                            window.location.href = "consulta_usuario.php";
+                        }, 3000);
+                    </script>
                 HEREDOC;
             } catch (PDOException $e) {
                 // Handle the error

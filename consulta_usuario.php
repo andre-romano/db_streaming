@@ -59,7 +59,10 @@
                 "sobrenome"     => "Sobrenome",
                 "dt_nascimento" => "Data de Nascimento",
                 "dt_registro"   => "Data de Registro",
-            ), $tabela_dados);
+            ), $tabela_dados, array(
+                array("id" => '<a href="atualizar_usuario.php?id=:id"><img src="img/edit_icon.png" width="32pt" height="32pt"></a>'),
+                array("id" => '<a href="deletar_usuario.php?id=:id"><img src="img/delete_icon.png" width="32pt" height="32pt"></a>'),
+            ));
         } catch (PDOException $e) {
             // Handle the error
             echo "<b>Error:</b> " . $e->getMessage();
