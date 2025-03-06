@@ -33,6 +33,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="cadastrar_usuario.php">Usuários</a></li>
+                        <li><a class="dropdown-item" href="cadastrar_video.php">Videos</a></li>
                     </ul>
                 </li>
 
