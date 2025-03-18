@@ -39,6 +39,7 @@
             VULNERABLE TO THE FOLLOWING INPUTS:
                 " AND primeiro_nome LIKE "João%
                 "; DROP TABLE visualizacao ; SELECT "
+                "; DROP TABLE video_genero ; DROP TABLE genero; SELECT "
             */
             /* OUTPUTS:
                 $email = %" AND primeiro_nome LIKE "João%%
